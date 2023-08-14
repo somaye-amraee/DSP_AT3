@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+  postgres_at3:
+    container_name: postgres_at3 # the name of your container
+    image: postgres:13
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=postgres
+
+    ports:
+      - "5423:5432"
+
+  streamlit_at3:
+    container_name: streamlit_at3
+    build: .
+    ports:
+      - 8501:8501
+    volumes:
+      - ./src:/app/src
+      - ./app/streamlit_app.py:/app/streamlit_app.py
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres_at3
+      - POSTGRES_DB=postgres
+      - POSTGRES_PORT=5432
+    depends_on:
+      - postgres_at3
